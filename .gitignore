@@ -1,0 +1,51 @@
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Binary Data
+*.nc
+
+# NEMO output files
+layout.dat
+ocean.output
+stdouterr_nemo
+timing.output
+Caribbean.o*
+Caribbean.e*
+xios_server.exe
+nemo
+output.namelist.dyn
+stdouterr
+stdouterr_xios
+opa
+time.step
+solver.stat

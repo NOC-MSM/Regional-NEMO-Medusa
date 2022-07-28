@@ -1,0 +1,28 @@
+# Install Pynemo, testing the MASTER PyNEMO branch
+
+#cd /work/$USER
+#--> Set up the directory for Pynemo
+mkdir TIDES_MASTER_EA
+cd TIDES_MASTER_EA
+
+#--> Obtain the code from the git repository
+git clone https://github.com/NOC-MSM/PyNEMO.git
+
+#--> Load the correct branch
+cd /work/$USER/TIDES_MASTER_EA/PyNEMO/
+git checkout master
+git status
+
+module load anaconda/3-2018_12
+conda env create -f pynemo_39.yml
+source activate pynemo
+
+# Set the necessary Java path
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.el7_9.x86_64/
+
+# Set python path to where the conda env is installed. Check root locaction with ``conda env list``
+export PYTHONPATH=/work/valegu/valegu-conda/pynemo/lib/python3.9/site-packages:$PYTHONPATH
+
+# Build and install pynemo
+python setup.py build
+python setup.py install --prefix /work/valegu/valegu-conda/pynemo

@@ -1,0 +1,24 @@
+# Install Pynemo, testing the branch valegu_tmp
+
+#cd /work/$USER
+#--> Set up the directory for Pynemo
+mkdir BDY_VALEGU_TMP
+cd BDY_VALEGU_TMP
+
+#--> Obtain the code from the git repository
+git clone https://github.com/NOC-MSM/PyNEMO.git
+
+#--> Load the correct branch
+# cd /work/$USER/BDY_VALEGU_TMP/PyNEMO/
+git checkout valegu_tmp
+git status
+
+module load anaconda/3-2018_12
+conda env create -f pynemo_39.yml
+source activate pynemo
+
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.322.b06-1.el7_9.x86_64/
+
+python setup.py build
+export PYTHONPATH=/work/valegu/valegu-conda/pynemo/lib/python3.9/site-packages:$PYTHONPATH
+python setup.py install --prefix /work/valegu/valegu-conda/pynemo

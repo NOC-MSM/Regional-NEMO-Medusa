@@ -1,107 +1,31 @@
-*******************
-# NEMO cfg Template
-*******************
+# EAFRICA_R12
+# Relocatable NEMO - MEDUSA
 
-This model configuration has been developed for ...
+An example configuration of the East African Coast, demonstrating how to setup new regional domains using the NEMO framework **coupled with MEDUSA**.
 
-*****************************************
-## NEMO regional configuration of the ...
-*****************************************
+This model configuration has been developed through the SOLSTICE (Sustainable Oceans, Livelihoods and food Security Through Increased Capacity in Ecosystem research in the Western Indian Ocean) Project.
+
+## NEMO - MEDUSA regional configuration of East African Coast 
 
 ### Model Summary
 
-The model grid:
-- has *X/Y*&deg; lat-lon resolution 
-- *Z* hybrid sigma / z-partial-step vertical levels
-- coving  *A*&deg;N to *B*&deg;N, *C*&deg;E to *D*&deg;E.
-For more details on the model parameters, bathymetry and external forcing, see *Ref*
+A specific region of focus includes exploring East African Coast (38.43°E to 43.06°E and 11.48°S to 1.35°S)
+
+The model grid has 1/12° lat-lon resolution and 75 vertical levels. Featuring:
+
+- NEMO v4.0.6
+- XIOS v2.5
+- FES2014 tides
+- Boundary conditions from the Global model ORCA0083-N06
+- Freshwater forcing (only river discharge included)
+- ERA5 forcings 
+
+![Bathymetry_1_12_resolution_and_river_mouths](https://user-images.githubusercontent.com/30412310/180629607-35b46470-b105-4a57-8d47-1045acb01d0b.png)
+
 
 ### Model Setup
 
-The following code was used in this configuration:
+The following process is followed to build and get started with this configuration
 
-svn co https://forge.ipsl.jussieu.fr/nemo/svn/NEMO/releases/release-4.0@XXXX
-
-svn co https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-2.5@YYYY
-
-*where XXXX and YYYY are the revision numbers known to work* 
-
-### Recipe
-
-NB This recipe has be written with the [ARCHER](https://www.archer.ac.uk) HPC INTEL environment in mind.
-
-```
-# Change to some working directory of choice
-export WORK_DIR='path_to_working_directory'
-if [ ! -d "$WORK_DIR" ]; then
-  mkdir $WORK_DIR
-fi
-cd $WORK_DIR
-
-# Checkout the NEMO code from the SVN Paris repository 
-svn co https://forge.ipsl.jussieu.fr/nemo/svn/NEMO/releases/release-4.0@XXXX nemo
-cd nemo/NEMOGCM/CONFIG
-
-# Checkout configuration directory structure
-git init .
-git clone git@github.com:NOC-MSM/$MY_CONFIG.git
-
-# Add it to the configuration list
-echo "MY_CONFIG OPA_SRC" >> cfg.txt
-```
-
-You can fold the ```make_xios``` command into a serial job. NB ```$NETCDF_DIR``` and ```$HDF5_DIR``` must be part of your environment. This should be the case if you've used ```modules``` to setup the netcdf and hdf5 e.g. 
-
-```
-module swap PrgEnv-cray PrgEnv-intel
-module load cray-hdf5-parallel
-module load cray-netcdf-hdf5parallel
-```
-
-At this point you can checkout and compile XIOS or use a version you already have. If you're starting from scratch:
-
-```
-# Choose an appropriate directory for your XIOS installation
-export XIOS_DIR='path_to_checkout_xios'
-if [ ! -d "$XIOS_DIR" ]; then
-  mkdir $XIOS_DIR
-fi
-cd $XIOS_DIR
-svn co http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/trunk@1242 xios
-cd xios
-cp $WORK_DIR/nemo/NEMOGCM/CONFIG/Caribbean/arch_xios/* ./arch
-./make_xios --full --prod --arch XC30_ARCHER --netcdf_lib netcdf4_par --job 4
-
-# Let's update the path to xios
-export XIOS_DIR=$XIOS_DIR/xios
-```
-
-Next, compile the NEMO code itself. First we copy the arch files into the appropriate directory.
-
-```
-cd $WORK_DIR/nemo/NEMOGCM/CONFIG/Caribbean
-cp ARCH/* ../../ARCH
-```
-
-NB while ```$XIOS_DIR``` is in the current environment if you ever compile in a new session ```$XIOS_DIR``` will have to be redefined as ```../ARCH/arch-XC_ARCHER_Intel.fcm``` use this environment variable.
-
-```
-cd ../
-./makenemo -n Caribbean -m XC_ARCHER_Intel -j 4
-```
-
-That should be enough to produce a valid executable. Now to copy the forcing data from JASMIN. 
-
-```
-cd Caribbean/EXP00
-wget -r -np -nH --cut-dirs=3 -erobots=off --reject="index.html*" http://gws-access.ceda.ac.uk/public/recicle/Caribbean/
-```
-
-And finally link the XIOS binary to the configuration directory and create a restarts directory.
-
-```
-ln -s $XIOS_DIR/bin/xios_server.exe xios_server.exe
-mkdir restarts
-```
-
-Edit and run the ```run_script.pbs``` script in ```../EXP00``` accordingly (namely enter a valid project code) and submit to the queue: ```qsub run_script.pbs```
+`git clone https://github.com/NOC-MSM/Regional-NEMO-Medusa.git` <br />
+`cd Regional-NEMO-Medusa`

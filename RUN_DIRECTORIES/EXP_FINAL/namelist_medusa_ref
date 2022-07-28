@@ -1,0 +1,386 @@
+!'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+!       nammsa_ctl   MEDUSA option switches
+!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+&nammsa_ctl
+   ln_msa_carbchem     = .true.    !! activates Carbone cycle
+   ln_msa_avgqsr       = .true.    !! biology sees daily avg light
+   ln_msa_ccd          = .false.   !! ?? - check
+   ln_msa_preico2      = .true.    !! atm co2 forced at pre-ind level
+   ln_msa_omipdic      = .false.   !! 2 dic pre-ind and date-related
+   ln_msa_noco2flux    = .false.   !! debug - cut sea-air co2 fluxes
+   ln_msa_debug        = .false.   !! add lots of debug print statements
+   ln_msa_nancheck     = .false.   !! checks if any nans in bio 3D fields
+   ln_msa_kill_medusa  = .false.   !! debug - no bio sources and sinks
+   ln_msa_no_detsink   = .false.   !! debug - poc don't sink
+/
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!
+! BIO namelist :  MEDUSA biological model option and parameter input
+! -------------
+!
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+!       nammsa_bio   Shared parameters for dynamics/advection/thermo
+!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+!
+!! Primary production and chl related quantities
+!!       xxi         :  conversion factor from gC to mmolN 
+!!       xaln        :  Chl-a specific initial slope of P-I curve for non-diatoms 
+!!       xald        :  Chl-a specific initial slope of P-I curve for diatoms
+!!       jphy        :  phytoplankton T-dependent growth switch
+!!       xvpn        :  maximum growth rate for non-diatoms
+!!       xvpd        :  maximum growth rate for diatoms
+!!       xthetam     :  maximum Chl to C ratio for non-diatoms      
+!!       xthetamd    :  maximum Chl to C ratio for diatoms
+!!
+!! Diatom silicon parameters
+!!       xsin0       :  minimum diatom Si:N ratio
+!!       xnsi0       :  minimum diatom N:Si ratio
+!!       xuif        :  hypothetical growth ratio at infinite Si:N ratio
+!!
+!! Nutrient limitation
+!!       jliebig     :  Liebig nutrient uptake switch
+!!       xnln        :  half-sat constant for DIN uptake by non-diatoms 
+!!       xnld        :  half-sat constant for DIN uptake by diatoms 
+!!       xsl         :  half-sat constant for Si uptake by diatoms 
+!!       xfld        :  half-sat constant for Fe uptake by diatoms  
+!!       xfln        :  half-sat constant for Fe uptake by non-datoms 
+!!
+!! Grazing
+!!       xgmi        :  microzoo maximum growth rate 
+!!       xgme        :  mesozoo maximum growth rate 
+!!       xkmi        :  microzoo grazing half-sat parameter
+!!       xkme        :  mesozoo grazing half-sat parameter
+!!       xphi        :  micro/mesozoo grazing inefficiency
+!!       xbetan      :  micro/mesozoo N assimilation efficiency
+!!       xbetac      :  micro/mesozoo C assimilation efficiency
+!!       xkc         :  micro/mesozoo net C growth efficiency
+!!       xpmipn      :  grazing preference of microzoo for non-diatoms
+!!       xpmid       :  grazing preference of microzoo for diatoms
+!!       xpmepn      :  grazing preference of mesozoo for non-diatoms 
+!!       xpmepd      :  grazing preference of mesozoo for diatoms
+!!       xpmezmi     :  grazing preference of mesozoo for microzoo
+!!       xpmed       :  grazing preference of mesozoo for detritus
+!!
+!! Metabolic losses
+!!       xmetapn     :  non-diatom metabolic loss rate
+!!       xmetapd     :  diatom     metabolic loss rate
+!!       xmetazmi    :  microzoo   metabolic loss rate
+!!       xmetazme    :  mesozoo    metabolic loss rate
+!!
+!! Mortality losses
+!!       jmpn        :  non-diatom mortality functional form
+!!       xmpn        :  non-diatom mortality rate
+!!       xkphn       :  non-diatom mortality half-sat constant
+!!       jmpd        :  diatom     mortality functional form
+!!       xmpd        :  diatom     mortality rate
+!!       xkphd       :  diatom     mortality half-sat constant
+!!       jmzmi       :  microzoo   mortality functional form
+!!       xmzmi       :  microzoo   mortality rate
+!!       xkzmi       :  microzoo   mortality half-sat constant
+!!       jmzme       :  mesozoo    mortality functional form
+!!       xmzme       :  mesozoo    mortality rate
+!!       xkzme       :  mesozoo    mortality half-sat constant
+!!
+!! Remineralisation
+!!       jmd         :  detritus T-dependent remineralisation switch
+!!       jsfd        :  accelerate seafloor detritus remin. switch
+!!       xmd         :  detrital nitrogen remineralisation rate 
+!!       xmdc        :  detrital carbon   remineralisation rate 
+!!
+!! Stochiometric ratios
+!!       xthetapn    :  non-diatom C:N ratio
+!!       xthetapd    :  diatom C:N ratio
+!!       xthetazmi   :  microzoo C:N ratio
+!!       xthetazme   :  mesozoo C:N ratio
+!!       xthetad     :  detritus C:N ratio (FOR IMPLICIT DTC ONLY)
+!!       xrfn        :  phytoplankton Fe:N ratio
+!!	 xrsn        :  phytoplankton Si:N ratio (LEGACY; NOT USED)
+!!
+!! Iron parameters
+!!       jiron       :  iron scavenging submodel switch
+!!       xfe_mass    :  iron atomic mass
+!!	 xfe_sol     :  aeolian iron solubility
+!!	 xfe_sed     :  sediment iron input
+!!	 xLgT	     :  total ligand concentration (umol/m3)
+!!	 xk_FeL	     :  dissociation constant for (Fe + L)
+!!	 xk_sc_Fe    :  scavenging rate of "free" iron
+!!	 
+!! Fast-sinking detritus parameters
+!!       jmartin     :  fast detritus remineralisation switch
+!!       jfdfate     :  fate of fast detritus at seafloor switch
+!!       jrratio     :  rain ratio switch
+!!	 jocalccd    :  CCD switch
+!!	 xridg_r0    :  Ridgwell rain ratio coefficient
+!!       xfdfrac1    :  fast-sinking fraction of diatom nat. mort. losses
+!!       xfdfrac2    :  fast-sinking fraction of mesozooplankton mort. losses
+!!       xfdfrac3    :  fast-sinking fraction of diatom silicon grazing losses
+!!       xcaco3a     :  polar (high latitude) CaCO3 fraction
+!!       xcaco3b     :  equatorial (low latitude) CaCO3 fraction
+!!       xmassc      :  organic C mass:mole ratio, C106 H175 O40 N16 P1
+!!       xmassca     :  calcium carbonate mass:mole ratio, CaCO3
+!!       xmasssi     :  biogenic silicon mass:mole ratio, (H2SiO3)n
+!!       xprotca     :  calcium carbonate protection ratio
+!!       xprotsi     :  biogenic silicon protection ratio
+!!       xfastc      :  organic C remineralisation length scale
+!!       xfastca     :  calcium carbonate dissolution length scale
+!!       xfastsi     :  biogenic silicon dissolution length scale
+!!
+!! Benthos parameters
+!!       jorgben     :  does   organic detritus go to the benthos?
+!!       jinorgben   :  does inorganic detritus go to the benthos?
+!!       xsedn       :  organic   nitrogen sediment remineralisation rate 
+!!       xsedfe      :  organic   iron     sediment remineralisation rate 
+!!       xsedsi      :  inorganic silicon  sediment dissolution      rate 
+!!       xsedc       :  organic   carbon   sediment remineralisation rate 
+!!       xsedca      :  inorganic carbon   sediment dissolution      rate 
+!!       xburial     :  burial fraction of sediment material
+!!
+!! River parameters
+!!       jriver_n    :  riverine N          input?
+!!       jriver_si   :  riverine Si         input?
+!!       jriver_c    :  riverine C          input?
+!!       jriver_alk  :  riverine alkalinity input?
+!!       jriver_dep  :  depth of riverine   input?
+!!
+!! Miscellaneous
+!!       xsdiss      :  diatom frustule dissolution rate
+!!
+!! Gravitational sinking      
+!!       vsed        :  detritus gravitational sinking rate 
+!!       xhr         :  coeff for Martin's remineralisation profile
+!!
+!! Additional parameters
+!!       jpmkb       :  vertical layer for diagnostic of the vertical flux 
+!!
+!! UKESM1 - new diagnostics  !! Jpalm
+!!       chl_out     : (IF key_oasis) use surf Chl (1) or mld Chl (2)
+!!       dmscut      : (if jdms_model=1) modify Anderson et al. 2001 param
+!!                     default = 1.72
+!!       dmsmin      : (if jdms_model=1) modify Anderson et al. 2001 dms minimum
+!!                     default = 2.29
+!!       dmsslp      : (if jdms_model=1) modify Anderson et al. 2001 dms slope
+!!                     default = 8.24
+!!       jdms        :  include dms diagnostics
+!!       jdms_input  :  use instant (0) or diel-avg (1) inputs
+!!       jdms_model  :  which DMS model is passed to atmosphere
+!!       scl_chl     : (IF key_oasis) scaling the exported to UM chlorophyll field
+!!       
+!!       xthetaphy :  oxygen evolution/consumption by phytoplankton
+!!                    = (32 / 16) + (6.625 * (119 / 106)) = (2 + 7.4375) mol O2 / mol N
+!!       xthetazoo :  oxygen consumption by zooplankton
+!!                    = (32 / 16) + (5.625 * (119 / 106)) = (2 + 6.3149) mol O2 / mol N
+!!       xthetanit :  oxygen consumption by nitrogen remineralisation
+!!                    = (32 / 16) = 2 mol O2 / mol N
+!!       xthetarem :  oxygen consumption by carbon remineralisation
+!!                    = (119 / 106) = 1.1226 mol O2 / mol C
+!!       xo2min    :  oxygen minimum concentration
+!!! min and max warning values -- values outside these ranges ring the trcbio_check bells
+!!       tempminw  : temperature minimum accepted
+!!       tempmaxw  : temperature maximum accepted
+!!       salminw   : Salinity    minimum accepted
+!!       salmaxw   : Salinity    maximum accepted
+!!       dicminw   : DIC         minimum accepted
+!!       dicmaxw   : DIC         maximum accepted
+!!       alkminw   : Alkalinity  minimum accepted
+!!       alkmaxw   : Alkalinity  maximum accepted
+&nammsa_bio
+!
+!! Primary production and chl related quantities
+      xxi       = 0.01257   !!
+      xaln      = 15.0      !! EKP (05/03/09)
+      xald      = 11.25     !! EKP (05/03/09)
+      jphy      = 1         !! 0 = T-independent; 1 = T-dependent; 2 = T-dependent-Q10
+      xvpn      = 0.640     !! EKP (05/03/09) -- daily avg = 0.530; daily cycle = 1.060; Q10 = 0.64
+      xvpd      = 0.600     !! EKP (05/03/09) -- daily avg = 0.500; daily cycle = 1.000; Q10 = 0.6
+      xthetam   = 0.05      !! EKP (05/03/09)
+      xthetamd  = 0.05      !! EKP (05/03/09)
+      jq10      = 1.50      !! Jpalm (17-06-2016)
+!!
+!! Diatom silicon parameters
+      xsin0     = 0.2       !! Mongin et al. (2003)
+      xnsi0     = 0.2       !! Mongin et al. (2003)
+      xuif      = 1.5       !! Mongin et al. (2003)
+!!
+!! Nutrient limitation
+      jliebig   = 0         !! 0 = multiplicative, 1 = Liebig
+      xnln      = 0.5       !! Fasham (1993)
+      xnld      = 0.75      !! EKP (05/03/09)
+      xsld      = 3.00      !! Fasham et al. (2006)-ish
+      xfln      = 0.00033   !! EKP (29/10/09); Parekh et al. (2005)
+      xfld      = 0.00067   !! EKP (29/10/09); Parekh et al. (2005); filtered through Moore et al. (2004)
+!!
+!! Grazing
+      xgmi      = 2.0       !! EKP (05/03/09)
+      xgme      = 0.5       !! AXY (21/12/09)
+      xkmi      = 0.8       !! EKP (26/02/09)
+      xkme      = 0.3       !! EKP (26/02/09)
+      xphi      = 0.20      !! Anderson & Pondaven (2003; 0.23); EKP (05/03/09; 0.20)
+      xbetan    = 0.77      !! Anderson & Pondaven (2003)
+      xbetac    = 0.64      !! Anderson & Pondaven (2003)
+!!    xbetan    = 0.69      !! compromise values inbetween those from ...
+!!    xbetac    = 0.69      !! Anderson & Pondaven (2003)for detrital carbon model
+      xkc       = 0.80      !! Anderson & Pondaven (2003)
+      xpmipn    = 0.75      !! 
+      xpmid     = 0.25      !!
+      xpmepn    = 0.15      !! EKP (26/02/09)
+      xpmepd    = 0.35      !! EKP (26/02/09)
+      xpmezmi   = 0.35      !! EKP (26/02/09)
+      xpmed     = 0.15      !! EKP (26/02/09)
+!!
+!! Metabolic losses
+      xmetapn   = 0.02      !! 
+      xmetapd   = 0.02      !! 
+      xmetazmi  = 0.02      !! 
+      xmetazme  = 0.02      !! 
+!!
+!! Mortality losses
+      jmpn      = 3         !! 1=linear; 2=quadratic; 3=hyperbolic; 4=sigmoid
+      xmpn      = 0.1       !!
+      xkphn     = 0.5       !! EKP (26/02/09): new parameter
+      jmpd      = 3         !! 1=linear; 2=quadratic; 3=hyperbolic; 4=sigmoid
+      xmpd      = 0.1       !!
+      xkphd     = 0.5       !! EKP (26/02/09): new parameter
+      jmzmi     = 3         !! 1=linear; 2=quadratic; 3=hyperbolic; 4=sigmoid
+      xmzmi     = 0.1       !!
+      xkzmi     = 0.5       !!
+      jmzme     = 3         !! 1=linear; 2=quadratic; 3=hyperbolic; 4=sigmoid
+      xmzme     = 0.2       !! EKP (26/02/09)
+      xkzme     = 0.75      !! EKP (26/02/09)
+!!
+!! Remineralisation
+      jmd       = 2         !! 0 = T-independent; 1 = T-dependent; 2 = T-dependent-Q10
+      jsfd      = 0         !! 0 = unchanged seafloor remin.; 1 = accelerated seafloor remin.
+      xmd       = 0.0190    !! T-dependent; 0.05 at 18C (Yool et al., 2010) - Q10 = 0.0190
+      xmdc      = 0.0152    !! T-dependent; 0.04 at 18C (Yool et al., 2010) - Q10 = 0.0152
+!! 
+!! Stochiometric ratios
+      xthetapn  = 6.625     !! Redfield
+      xthetapd  = 6.625     !! Redfield
+      xthetazmi = 5.625     !! Redfield
+      xthetazme = 5.625     !! Redfield
+!! AXY (26/11/08): implicit detrital carbon change
+      xthetad   = 6.625     !! Redfield
+      xrfn      = 30.0e-6   !! Parekh et al. (2005)
+      xrsn      = 1.0       !! not used here; retained for Lobster
+!!
+!! Iron parameters
+      jiron     = 1         !! iron scavenging submodel switch
+      xfe_mass  = 55.485    !! Fe atomic mass
+      xfe_sol   = 0.00532   !! scaled to get same input as Parekh et al. (2005)
+      xfe_sed   = 0.000228  !! AXY (10/07/12): Moore-ish
+      xLgT      = 1.0       !! from Diat-HadOCC; from Parekh et al. (2005)
+      xk_FeL	= 100.0     !! from Diat-HadOCC
+      xk_sc_Fe  = 1.e-3     !! from Dutkiewicz et al. (2005)
+!!
+!! Fast-sinking detritus parameters
+      jexport   = 1         !! 1 = ballast; 2 = Martin (1987); 3 = Henson (2011)
+      jfdfate   = 0         !! 0 = instant remin.; 1 = transmogrify into slow detritus
+      jrratio   = 2         !! 0 = Dunne (2005); 1 = Ridgwell (2007) surface; 2 = Ridgwell (2007) 3D
+      jocalccd  = 1         !! 0 = default, fixed; 1 = calculated, dynamic
+      xridg_r0  = 0.026     !! = 0.044, Ridgwell et al. (2007); scaled to 60% from preliminary sims
+      xfdfrac1  = 0.333     !! control parameter; no "real" value (AXY; 12/03/09)
+      xfdfrac2  = 1.00      !! control parameter; no "real" value (AXY; 12/03/09)
+      xfdfrac3  = 0.80      !! control parameter; no "real" value (AXY; 12/03/09)
+      xcaco3a   = 0.02      !! Dunne et al. (2005); not an exact value
+      xcaco3b   = 0.10      !! Dunne et al. (2005); not an exact value
+!! AXY (06/01/09): after contacting Dunne, new values are used for masses ...
+!!    xmassc    = 22.1188   !!
+!!    xmassca   = 100.086   !! original values; replaced by Dunne suggestion
+!!    xmasssi   = 78.0988   !!
+      xmassc    = 12.011    !! C atomic mass
+      xmassca   = 100.086   !! CaCO3; based on atomic masses
+      xmasssi   = 60.084    !! SiO2; based on atomic masses
+      xprotca   = 0.070     !! Dunne et al. (2005)
+      xprotsi   = 0.026     !! Dunne et al. (2005)
+      xfastc    = 188.0     !! Dunne et al. (2005)
+      xfastca   = 3500.0    !! Dunne et al. (2005)
+      xfastsi   = 2000.0    !! Dunne et al. (2005)
+!!
+!! Benthos parameters
+      jorgben   = 1         !! 0 = no; 1 = yes
+      jinorgben = 1         !! 0 = no; 1 = yes
+      xsedn     = 0.05      !! default ERSEM-ish value
+      xsedfe    = 0.05      !! default ERSEM-ish value
+      xsedsi    = 0.01      !! default ERSEM-ish value
+      xsedc     = 0.05      !! default ERSEM-ish value
+      xsedca    = 0.01      !! default ERSEM-ish value
+      xburial   = 0.0       !! set to zero
+!! 
+!! River parameters
+      jriver_n  = 0         !! 0 = no; 1 = runoff-dependent fluxes; 2= fixed fluxes
+      jriver_si = 0         !! 0 = no; 1 = runoff-dependent fluxes; 2= fixed fluxes
+      jriver_c  = 0         !! 0 = no; 1 = runoff-dependent fluxes; 2= fixed fluxes
+      jriver_alk= 0         !! 0 = no; 1 = runoff-dependent fluxes; 2= fixed fluxes
+      jriver_dep= 5         !! depth to which river nutrients are added
+!!
+!! Miscellaneous
+      xsdiss    = 0.006     !! Mongin et al. (2003); 0.006 is an alternative
+!!
+!! Gravitational sinking
+      vsed      = 3.472e-5  !! EKP (05/03/09)
+!!
+!! Additional parameters
+      jpmkb      = 16       !! 
+!!
+!! UKESM1 - new diagnostics !! Jpalm
+      chl_out    = 1        !! (IF key_oasis) use surf Chl (1) or mld Chl (2)
+      dmscut     = 1.72     !! (if jdms_model=1) modify Anderson et al. 2001 param
+!!                             default = 1.72
+      dmsmin     = 2.29     !! (if jdms_model=1) modify Anderson et al. 2001 dms minimum
+!!                             default = 2.29
+      dmsslp     = 8.24     !! (if jdms_model=1) modify Anderson et al. 2001 dms slope
+!!                             default = 8.24
+      jdms       = 1        !! include dms diagnostics
+      jdms_input = 1        !! use instant (0) or diel-avg (1) inputs
+      jdms_model = 3        !! choice of DMS model passed to atmosphere
+!!                             1 = ANDR, 2 = SIMO, 3 = ARAN, 4 = HALL
+      scl_chl    = 1.0      !! (IF key_oasis) scaling the exported to UM chlorophyll field
+!!
+      xthetaphy = 9.4375
+      xthetazoo = 8.3149
+      xthetanit = 2.0
+      xthetarem = 1.1226
+      xo2min    = 4.0
+!! min and max warning values 
+      tempminw = -3.0
+      tempmaxw = 40.0
+      salminw  = 0.0
+      salmaxw  = 50.0
+      dicminw  = 0.0
+      dicmaxw  = 4000.0
+      alkminw  = 0.0
+      alkmaxw  = 4000.0
+/
+!'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+!       nammsa_opt
+!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+!
+!   xkg0 : green water absorption coefficient   [m-1]
+!   xkr0 : red water absorption coefficient     [m-1]
+!  xkgp  : pigment green absorption coefficient [m-1]
+!  xkrp  : pigment red absorption coefficient   [m-1]
+!  xlg   : green chl exposant
+!  xlr   : red chl exposant
+!  rpig  : chla / (chla+phea) ratio
+!
+&nammsa_opt
+   xkg0 = 0.0232
+   xkr0 = 0.225
+   xkgp = 0.074
+   xkrp = 0.037
+   xlg  = 0.629
+   xlr  = 0.674
+   rpig = 0.7
+/
+!'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+!       nammsa_dust
+!,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+&nammsa_dust
+   ln_read_dust = .false.
+   cn_dir      = './'      !  root directory for the dust data location
+   !___________!_________________________!___________________!___________!_____________!________!___________!__________________!__________!_______________!
+   !           !  file name              ! frequency (hours) ! variable  ! time interp.!  clim  ! 'yearly'/ ! weights filename ! rotation ! land/sea mask !
+   !           !                         !  (if <0  months)  !   name    !   (logical) !  (T/F) ! 'monthly' !                  ! pairing  !    filename   !
+   sn_dust =       'dust_nomask'         ,  -1               , 'dust'    ,   .true.    , .true. , 'yearly'  ,    ''            ,    ''    ,    ''
+/

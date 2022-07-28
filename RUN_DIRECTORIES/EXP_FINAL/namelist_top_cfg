@@ -1,0 +1,185 @@
+!!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!! NEMO/TOP1 :  Configuration namelist : used to overwrite defaults values defined in SHARED/namelist_top_ref
+!>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+!-----------------------------------------------------------------------
+&namtrc_run     !   run information
+!-----------------------------------------------------------------------
+   ln_top_euler  = .false.   !  use Euler time-stepping for TOP
+   ln_rsttr      = .true.   !  start from a restart file (T) or not (F)
+   nn_rsttr      =   2       !  restart control = 0 initial time step is not compared to the restart file value
+                             !                  = 1 do not use the value in the restart file
+                             !                  = 2 calendar parameters read in the restart file
+   cn_trcrst_in  = "EA_RIV_OFF_FINAL_RUN2_00262800_restart_trc"   !  suffix of pass. sn_tracer restart name (input)
+   cn_trcrst_indir = "./RESTARTS_TRC/EA_RIV_OFF_RUN2/"          !  directory from which to read input passive tracer restarts
+   cn_trcrst_out = "restart_trc"   !  suffix of pass. sn_tracer restart name (output)
+   cn_trcrst_outdir = "./RESTARTS_TRC"         !  directory to which to write output passive tracer restarts
+/
+!-----------------------------------------------------------------------
+&namtrc     !   tracers definition
+!-----------------------------------------------------------------------
+   jp_bgc        = 15
+   ln_medusa     =  .true.   !  Run MEDUSA BGC model
+   ln_pisces     =  .false.  !  Run PISCES BGC model
+   ln_trcdta     =  .true.  !  Initialisation from data input file (T) or not (F)
+!                !    name   !           title of the field              ! initial data ! initial data !   sbc   !   cbc   !   obc   ! save   !
+!                !           !                                           !  units       ! from file    !         !         !         ! or not !
+!                !           !                                           !              ! or not       !         !         !         !        !
+   sn_tracer(1)   = 'CHN' , 'Chl-a concentration in non-diatom phytoplankton ',  'mg Chl/m3' ,  .true., .false., .false., .true.
+   sn_tracer(2)   = 'CHD' , 'Chl-a concentration in     diatom phytoplankton ',  'mg Chl/m3' ,  .true., .false., .false., .true.
+   sn_tracer(3)   = 'PHN' , 'non-diatom phytoplankton                        ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(4)   = 'PHD' , 'diatom phytoplankton                            ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(5)   = 'ZMI' , 'micro zooplankton                               ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(6)   = 'ZME' , 'meso  zooplankton                               ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(7)   = 'DIN' , 'dissolved inorganic nitrogen                    ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(8)   = 'SIL' , 'silicate                                        ',  'mmolSi/m3' ,  .true., .false., .false., .true.
+   sn_tracer(9)   = 'FER' , 'dissolved iron                                  ',  'mmolFe/m3' ,  .true., .false., .false., .true.
+   sn_tracer(10)  = 'DET' , 'detrital nitrogen                               ',  'mmol-N/m3' ,  .true., .false., .false., .true.
+   sn_tracer(11)  = 'PDS' , 'biogenic silicon in diatom phytoplankton        ',  'mmolSi/m3' ,  .true., .false., .false., .true.
+   sn_tracer(12)  = 'DTC' , 'detrital carbon                                 ',  'mmol-C/m3' ,  .true., .false., .false., .true.
+   sn_tracer(13)  = 'DiC' , 'dissolved inorganic carbon                      ',  'mmol-C/m3' ,  .true., .false., .false., .true.
+   sn_tracer(14)  = 'ALK' , 'alkalinity                                      ',  'meq/m3'    ,  .true., .false., .false., .true.
+   sn_tracer(15)  = 'OXY' , 'dissolved oxygen                                ',  'mmolO2/m3' ,  .true., .false., .false., .true.
+/
+!-----------------------------------------------------------------------
+&namtrc_dta      !    Initialisation from data input file
+!-----------------------------------------------------------------------
+!
+!                !  file name               ! frequency (hours) ! variable   ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation !
+!                !                          !  (if <0  months)  !   name     !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  !
+!   sn_trcdta(7)  = 'woa13_nit_jan_k75_nomask.nc' , -12       ,  'n_an'      ,    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!   sn_trcdta(8)  = 'woa13_sil_jan_k75_nomask.nc' , -12       ,  'i_an'      ,    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!   sn_trcdta(9)  = 'iron_jan_k75_nomask.nc'      , -12       ,  'iron'      ,    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!   sn_trcdta(13) = 'dic_jan_k75_nomask.nc'       , -12       ,  'dic'       ,    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!   sn_trcdta(14) = 'alkalinity_jan_k75_nomask.nc', -12       ,  'alkalinity',    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!   sn_trcdta(15) = 'woa13_oxy_jan_k75_nomask.nc' , -12       ,  'o_an'      ,    .true.    , .true. , 'yearly'  , 'weights_woa13_orca0083_bilin3D.nc', '' ,  ''
+!
+  cn_dir        =  './IC_TRACERS/' !  root directory for the location of the data files
+!  rn_trfac(7)   =   1.0      !  multiplicative factor
+!  rn_trfac(8)   =   1.0      !  -      -      -     -
+!  rn_trfac(9)   =   1.0      !  -      -      -     -
+!  rn_trfac(13)  =   1.0      !  -      -      -     -
+!  rn_trfac(14)  =   1.0      !  -      -      -     -
+!  rn_trfac(15)  =   1.0      !  -      -      -     -
+   sn_trcdta(1)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'CHN'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(2)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'CHD'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(3)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'PHN'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(4)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'PHD'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(5)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'ZMI'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(6)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'ZME'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(7)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12         ,  'DIN'     ,    .false.    , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(8)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'         ,        -12         ,  'SIL'      ,    .false.    , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(9)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'FER'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(10)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'DET'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(11)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'PDS'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(12)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'DTC'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(13)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'DIC'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(14)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'ALK'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+   sn_trcdta(15)   = 'cut_Fit_ORCA0083-N06_20130105d05P.nc'        ,        -12        ,  'OXY'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+!   sn_trcdta(13)  = 'data_DIC_nomask'        ,        -12        ,  'DIC'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+!   sn_trcdta(14)  = 'data_Alkalini_nomask'   ,        -12        ,  'Alkalini',    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+!   sn_trcdta(15)  = 'data_O2_nomask'         ,        -1         ,  'O2'      ,    .true.    , .true. , 'yearly'  , ''       , ''   , ''
+   rn_trfac(1)    =   1.0  !  -      -      -     -
+   rn_trfac(2)    =   1.0  !  -      -      -     -
+   rn_trfac(3)    =   1.0  !  -      -      -     -
+   rn_trfac(4)    =   1.0  !  -      -      -     -
+   rn_trfac(5)    =   1.0  !  -      -      -     -
+   rn_trfac(6)    =   1.0  !  -      -      -     -
+   rn_trfac(7)    =   1.0  !  -      -      -     -
+   rn_trfac(8)    =   1.0  !  -      -      -     -
+   rn_trfac(9)    =   1.0      !  -      -      -     -
+   rn_trfac(10)    =   1.0      !  -      -      -     -
+   rn_trfac(11)    =   1.0      !  -      -      -     -
+   rn_trfac(12)    =   1.0  !  -      -      -     -
+   rn_trfac(13)    =   1.0  !  -      -      -     -
+   rn_trfac(14)    =   1.0  !  -      -      -     -
+   rn_trfac(15)    =   1.0  !  -      -      -     -
+!   rn_trfac(13)   =   1.0e-06  !  multiplicative factor
+!   rn_trfac(14)   =   1.0e-06  !  -      -      -     -
+!   rn_trfac(15)   =  44.6e-06  !  -      -      -     -
+/
+!-----------------------------------------------------------------------
+&namtrc_adv    !   advection scheme for passive tracer 
+!-----------------------------------------------------------------------
+   ln_trcadv_mus =  .true.   !  MUSCL scheme
+      ln_mus_ups =  .false.  !  use upstream scheme near river mouths
+/
+!-----------------------------------------------------------------------
+&namtrc_ldf    !   lateral diffusion scheme for passive tracer 
+!-----------------------------------------------------------------------
+   ln_trcldf_tra   = .true.      !  use active tracer setting
+/
+!-----------------------------------------------------------------------
+&namtrc_rad      !  treatment of negative concentrations
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_snk      !  sedimentation of particles
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_dmp      !   passive tracer newtonian damping
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_ice      !    Representation of sea ice growth & melt effects
+!-----------------------------------------------------------------------
+/
+!-----------------------------------------------------------------------
+&namtrc_trd      !   diagnostics on tracer trends                       ('key_trdtrc')
+!----------------------------------------------------------------------
+/
+!----------------------------------------------------------------------
+&namtrc_bc       !   data for boundary conditions
+!-----------------------------------------------------------------------
+!                !  file name               ! frequency (hours) ! variable  ! time interp. !  clim  ! 'yearly'/ ! weights  ! rotation ! land/sea mask !
+!                !                          !  (if <0  months)  !   name    !   (logical)  !  (T/F) ! 'monthly' ! filename ! pairing  ! filename      !
+!   sn_trcsbc(1)  = 'TRACER_SBC'        ,        -12        ,  'TRACER_SUR'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+!   rn_trsfac(1)  = 1.0
+!   sn_trccbc(1)  = 'TRACER_CBC'        ,        -12        ,  'TRACER_RIV'     ,    .false.   , .true. , 'yearly'  , ''       , ''   , ''
+!   rn_trcfac(1)  = 1.0
+   sn_trcobc(1)  = 'EA_TMP_bdyT'        ,        24        ,  'CHN'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(1)  = 1.0
+   sn_trcobc(2)  = 'EA_TMP_bdyT'        ,        24        ,  'CHD'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(2)  = 1.0
+   sn_trcobc(3)  = 'EA_TMP_bdyT'        ,        24        ,  'PHN'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(3)  = 1.0
+   sn_trcobc(4)  = 'EA_TMP_bdyT'        ,        24        ,  'PHD'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(4)  = 1.0
+   sn_trcobc(5)  = 'EA_TMP_bdyT'        ,        24        ,  'ZMI'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(5)  = 1.0
+   sn_trcobc(6)  = 'EA_TMP_bdyT'        ,        24        ,  'ZME'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(6)  = 1.0
+   sn_trcobc(7)  = 'EA_TMP_bdyT'        ,        24        ,  'DIN'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(7)  = 1.0
+   sn_trcobc(8)  = 'EA_TMP_bdyT'        ,        24        ,  'SIL'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(8)  = 1.0
+   sn_trcobc(9)  = 'EA_TMP_bdyT'        ,        24        ,  'FER'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(9)  = 1.0
+   sn_trcobc(10)  = 'EA_TMP_bdyT'        ,        24        ,  'DET'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(10)  = 1.0
+   sn_trcobc(11)  = 'EA_TMP_bdyT'        ,        24        ,  'PDS'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(11)  = 1.0
+   sn_trcobc(12)  = 'EA_TMP_bdyT'        ,        24        ,  'DTC'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(12)  = 1.0
+   sn_trcobc(13)  = 'EA_TMP_bdyT'        ,        24        ,  'DIC'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(13)  = 1.0
+   sn_trcobc(14)  = 'EA_TMP_bdyT'        ,        24        ,  'ALK'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(14)  = 1.0
+   sn_trcobc(15)  = 'EA_TMP_bdyT'        ,        24        ,  'OXY'     ,    .true.   , .false. , 'monthly'  , ''       , ''   , ''
+   rn_trofac(15)  = 1.0
+!
+    cn_dir_sbc        =  './'      !  root directory for the location of SURFACE data files
+    cn_dir_cbc        =  './'      !  root directory for the location of COASTAL data files
+    cn_dir_obc        =  './BDY_JAMES/'      !  root directory for the location of OPEN data files
+/
+!----------------------------------------------------------------------
+&namtrc_bdy      !   Setup of tracer boundary conditions
+!-----------------------------------------------------------------------
+   cn_trc_dflt   = 'neumann' !  OBC applied by default to all tracers                                          !!! VAL : CHANGED FROM neumann to specified
+   cn_trc        = 'frs'    !  Boundary conditions used for tracers with data files (selected in namtrc)
+
+   nn_trcdmp_bdy = 0         !  Use damping timescales defined in nambdy of namelist
+                             !  = 0 NO damping of tracers at open boudaries
+                             !  = 1 Only for tracers forced with external data
+                             !  = 2 Damping applied to all tracers
+/
